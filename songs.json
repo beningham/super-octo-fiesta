@@ -1,0 +1,22 @@
+[
+  {
+    "artist": "The Beatles",
+    "title": "With a Little Help from My Friends",
+    "year": "1967",
+    "image": "assets/beatles.jpg",
+    "funfacts": [
+      "Ringo Starr initially had reservations about taking the lead vocal on this track. He worried about hitting the high notes in front of the others which made the first passes quite tentative. John and Paul wrote the melody with Ringo’s range in mind then coached him through the session with jokes and encouragement. The relaxed mood, plus a late-night glass or two, softened the delivery into the warm sing-along we know today. That vulnerable tone became the perfect expression of friendship and support.",
+      "The studio soundstage for this song was deliberately dressed like a tiny club with crowd noise brought in on tape. George Martin wanted the track to feel like a friendly room rather than a pristine pop performance. Layered harmonies were recorded quickly then double-tracked to add breadth without losing that human wobble. Ringo’s timing is simple yet charismatic which leaves room for the band to colour around him. You can hear the smile in the phrasing throughout the last chorus."
+    ]
+  },
+  {
+    "artist": "Radiohead",
+    "title": "Paranoid Android",
+    "year": "1997",
+    "image": "assets/radiohead.jpg",
+    "funfacts": [
+      "Radiohead assembled this piece from three unfinished songs that never quite worked alone. The sections were stitched together like scenes in a short film which gave the track its unsettling lurch from calm to chaos. Thom Yorke’s bar-room experience in Los Angeles fed the anxious lyric while Jonny Greenwood’s solo was kept from an early take because the raw edges felt honest. The title nods to Douglas Adams yet the mood is darker and stranger. It captured the late-nineties sense of overload perfectly.",
+      "The quiet choral passage drew on medieval harmony rather than rock clichés which is why the mood feels devotional rather than sentimental. Producer Nigel Godrich kept the drums dry and forward so every dynamic shift lands with theatre. Guitars were layered sparingly then pushed hard only at two key moments which stops the six-minute runtime from feeling bloated. Live shows rarely replicate the full arrangement which keeps the studio version special. It remains a cult favourite across very different audiences."
+    ]
+  }
+]
