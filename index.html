@@ -7,6 +7,7 @@
 
 <style>
   html, body { margin:0; overflow:hidden; height:100%; background:#000; font-family:Inter, system-ui, Arial, sans-serif; }
+  body{ display:flex; align-items:center; justify-content:center; width:100%; min-height:100vh; }
 
   :root{
     --safe-pad-x: clamp(24px, 4.5vw, 80px);
@@ -43,15 +44,15 @@
   /* Main layout: left text, right art, TV-safe padding */
   #content{
     position:relative; display:grid; grid-template-columns: 1.25fr 1fr;
-    align-items:center; height:100vh; width:100vw;
+    align-items:center; height:min(100vh, 720px); width:min(100vw, 1280px);
     padding: var(--safe-pad-y) var(--safe-pad-x);
-    color:#fff;
+    color:#fff; box-sizing:border-box;
   }
 
   /* Text column */
   #info{
     display:flex; flex-direction:column; justify-content:center; gap:.6rem;
-    height:75vh; max-width:min(64rem, 58vw);
+    height:75vh; max-width:min(64rem, 58vw); max-height:520px;
     text-shadow: 0 2px 20px rgba(0,0,0,.65), 0 1px 6px rgba(0,0,0,.55);
     transform:translateY(-.5rem);
   }
@@ -85,7 +86,7 @@
     padding-right: clamp(8px, 2vw, 40px);
   }
   .coverFrame{
-    width: min(64vh, 42vw);   /* square that scales with TV height */
+    width: min(52vh, 40vw);   /* square that scales with TV height */
     aspect-ratio: 1 / 1;
     position:relative; border-radius:14px; overflow:hidden;
     box-shadow: 0 22px 70px rgba(0,0,0,.60);
@@ -110,6 +111,28 @@
   #logoLayer img{
     max-width: 48vmin; max-height: 48vmin; object-fit:contain;
     filter: grayscale(1) brightness(0.75);
+  }
+
+  #modeIndicator{
+    position:fixed; top: clamp(12px, 3vh, 28px); right: clamp(12px, 3vw, 32px);
+    z-index:40; padding:0.35rem 0.85rem; border-radius:999px;
+    border:1px solid rgba(255,255,255,.35); background:rgba(15,23,42,.65);
+    font-size: clamp(12px, 1.9vmin, 15px); letter-spacing:.12em;
+    text-transform:uppercase; color:#f8fafc; pointer-events:none;
+    backdrop-filter: blur(12px); text-shadow:0 1px 6px rgba(0,0,0,.65);
+  }
+  #modeIndicator strong{ color:var(--accent); font-weight:700; }
+  #modeIndicator[data-design="true"]{ border-color:var(--accent); box-shadow:0 0 12px rgba(255,210,74,.32); }
+
+  @media (max-height: 780px){
+    :root{
+      --safe-pad-x: clamp(18px, 5vw, 48px);
+      --safe-pad-y: clamp(16px, 5vh, 44px);
+    }
+    #artist{ font-size: clamp(26px, 5.2vmin, 48px); }
+    #title{ font-size: clamp(18px, 3.6vmin, 26px); }
+    #funfact{ font-size: clamp(14px, 2.8vmin, 19px); min-height:9.5rem; }
+    .coverFrame{ width:min(48vh, 46vw); }
   }
 </style>
 </head>
@@ -142,6 +165,9 @@
     <img id="logoImg" src="assets/logo.png" alt="Station Logo" />
   </div>
 
+  <!-- Screen mode indicator -->
+  <div id="modeIndicator" role="status" aria-live="polite"></div>
+
 <script>
   /* ---------- Config ---------- */
   const FACT_DISPLAY_MS = 5000;         // 5 s per fun fact
@@ -156,6 +182,9 @@
   let factTimer = null, songTimer = null;
   let coverInitialised = false;
   let activeLayer = 'A';
+
+  const DESIGN_WIDTH = 1280;
+  const DESIGN_HEIGHT = 720;
 
   /* ---------- Boot ---------- */
   fetch('songs.json', { cache: 'no-store' })
@@ -221,6 +250,45 @@
   window.showIdleLogo = async () => { await showLogoHold(); };
 
   function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  /* ---------- Screen mode indicator ---------- */
+  function reduceRatio(width, height){
+    const gcd = (a,b) => b ? gcd(b, a % b) : a;
+    const divisor = gcd(width, height) || 1;
+    return `${Math.round(width / divisor)}:${Math.round(height / divisor)}`;
+  }
+
+  function describeMode(width, height){
+    const steps = [
+      { label: '4K', height: 2160 },
+      { label: '1440p', height: 1440 },
+      { label: '1080p', height: 1080 },
+      { label: '720p', height: 720 },
+      { label: 'SD', height: 0 }
+    ];
+    const match = steps.find(step => height >= step.height) || steps[steps.length - 1];
+    const aspect = reduceRatio(width, height);
+    const isSixteenNine = Math.abs(width / height - 16 / 9) < 0.02;
+    return {
+      label: match.label,
+      aspect: isSixteenNine ? '16:9' : aspect,
+      isDesign: width === DESIGN_WIDTH && height === DESIGN_HEIGHT
+    };
+  }
+
+  function updateScreenMode(){
+    const indicator = document.getElementById('modeIndicator');
+    if (!indicator) return;
+    const width = Math.round(window.innerWidth);
+    const height = Math.round(window.innerHeight);
+    const { label, aspect, isDesign } = describeMode(width, height);
+    indicator.dataset.design = isDesign ? 'true' : 'false';
+    indicator.innerHTML = `<strong>${label}</strong> · ${width}×${height} · ${aspect}`;
+  }
+
+  window.addEventListener('resize', updateScreenMode);
+  window.addEventListener('orientationchange', updateScreenMode);
+  updateScreenMode();
 
   /* ---------- Main flow ---------- */
   async function showSong(isFirst = false) {
