@@ -107,6 +107,23 @@
     display:flex; justify-content:flex-end; align-items:center;
     padding-right: clamp(8px, 2vw, 40px);
   }
+
+  #funfact{
+    font-style:italic; color:#a5b4fc; opacity:0; transform:translateY(8px);
+    transition:opacity 1.1s ease, transform 1s ease;
+    font-size: clamp(14px, 2.0vmin, 22px); line-height:1.55;
+    max-width: 90ch;
+    min-height: 11rem;
+    margin-top:.8rem;
+  }
+  #funfact.active{ opacity:1; transform:translateY(0); }
+
+  /* Album art: framed and pushed to the side */
+  .artWrap{
+    width:100%;
+    display:flex; justify-content:flex-end; align-items:center;
+    padding-right: clamp(8px, 2vw, 40px);
+  }
   .coverFrame{
     width: min(52vh, 40vw);   /* square that scales with TV height */
     aspect-ratio: 1 / 1;
